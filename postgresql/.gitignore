@@ -1,0 +1,6 @@
+# Ignore everything in this directory
+*
+# Except this file
+!.gitignore
+data/*
+!010-create_databases.sh

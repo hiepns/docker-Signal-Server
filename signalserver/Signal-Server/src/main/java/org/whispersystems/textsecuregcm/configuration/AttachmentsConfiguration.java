@@ -33,6 +33,9 @@ public class AttachmentsConfiguration {
   @JsonProperty
   private String bucket;
 
+  @JsonProperty
+  private String endpoint;
+
   public String getAccessKey() {
     return accessKey;
   }
@@ -43,5 +46,9 @@ public class AttachmentsConfiguration {
 
   public String getBucket() {
     return bucket;
+  }
+
+  public String getEndpoint() {
+    return endpoint;
   }
 }

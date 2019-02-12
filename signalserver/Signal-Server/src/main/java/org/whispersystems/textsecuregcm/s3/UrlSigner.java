@@ -44,10 +44,12 @@ public class UrlSigner {
 
   private final AWSCredentials credentials;
   private final String bucket;
+  private final String endpoint;
 
   public UrlSigner(AttachmentsConfiguration config) {
     this.credentials = new BasicAWSCredentials(config.getAccessKey(), config.getAccessSecret());
     this.bucket      = config.getBucket();
+    this.endpoint    = config.getEndpoint();
   }
 
   public URL getPreSignedUrl(long attachmentId, HttpMethod method, boolean unaccelerated) {
@@ -57,7 +59,9 @@ public class UrlSigner {
     AmazonS3                    client  = new AmazonS3Client(credentials, clientConfiguration);
     Region usEast1 = Region.getRegion(Regions.US_EAST_1);
     client.setRegion(usEast1);
-    client.setEndpoint("https://projectsignal.me:9000");
+    if (endpoint != null && !endpoint.isEmpty()) {
+      client.setEndpoint(endpoint);
+    }
 
     final S3ClientOptions clientOptions = S3ClientOptions.builder().setPathStyleAccess(true).build();
     client.setS3ClientOptions(clientOptions);
