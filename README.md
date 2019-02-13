@@ -1,5 +1,7 @@
 # Signal-Server docker
 
+Docker environment for running Signal-Server.
+
 ## Clone repo
 
 Clone this repo:
@@ -48,7 +50,18 @@ Configure nginx frontend:
 
 ## Create .env file
 
-Create `.env` file using sample `.env.dist`
+Create `.env` file according to example `.env.dist`:
+
+    POSTGRES_USER=signal  # create postgres user with such login
+    POSTGRES_PASSWORD=thepassword  # and password
+    MINIO_ACCESS_KEY=AKIAIG4ILCORMAJCS37A  # create local S3 with such access key
+    MINIO_SECRET_KEY=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  # and secret
+    HOST=127.0.0.1  # expose 8080 and 8081 to such host (in this case nginx is frontend)
+    EXTERNAL_IP=0.0.0.0  # external IP of a host, because turn server is a behind docker proxy
+    TURN_REALM=turn.domain.ru  # turn realm
+    TURN_SECRET=test  # turn secret key
+    TURN_LOW=49152  # turn minimum UDP port
+    TURN_HIGH=49252  # turn maximun UDP port
 
 ## Configure Signal server
 
@@ -71,7 +84,7 @@ Create `signalserver/Signal-Server/config/Signal.yml` with following content:
     
     server:
       applicationConnectors:
-        - type: http
+        - type: http  # use https and add certificates if you use without nginx and .env:HOST=0.0.0.0
           port: 8080
       adminConnectors:
         - type: http
@@ -81,6 +94,7 @@ Create `signalserver/Signal-Server/config/Signal.yml` with following content:
       secret: test
       uris:
         - turn:turn.domain.ru:3478
+        - turn:turn.domain.ru:3479?transport=udp
     
     cache: # Redis server configuration for cache cluster
       url: "redis://signal-redis:6379/1"

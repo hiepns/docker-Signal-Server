@@ -22,9 +22,16 @@ services:
     build: ./turn
     container_name: signal-turn
     restart: always
+    environment:
+      - TURN_SECRET=${TURN_SECRET}
+      - TURN_REALM=${TURN_REALM}
+      - EXTERNAL_IP=${EXTERNAL_IP}
+      - TURN_LOW=${TURN_LOW}
+      - TURN_HIGH=${TURN_HIGH}
     ports:
-      - 3478:3478
-      - 3479:3479
+      - 3478-3479:3478-3479
+      - 3478-3479:3478-3479/udp
+      - ${TURN_LOW}-${TURN_HIGH}:${TURN_LOW}-${TURN_HIGH}/udp
 
   signal-server:
     build: ./signalserver

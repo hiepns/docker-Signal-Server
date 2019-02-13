@@ -15,7 +15,7 @@ endif
 
 -include .env
 
-.PHONY: all help up start down stop provision provision-s3
+.PHONY: all help up start down stop provision
 all: help
 
 help:
