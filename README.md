@@ -94,7 +94,7 @@ Create `signalserver/Signal-Server/config/Signal.yml` with following content:
       secret: test
       uris:
         - turn:turn.domain.ru:3478
-        - turn:turn.domain.ru:3479?transport=udp
+        - turn:turn.domain.ru:3478?transport=udp
     
     cache: # Redis server configuration for cache cluster
       url: "redis://signal-redis:6379/1"
