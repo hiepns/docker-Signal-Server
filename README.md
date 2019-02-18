@@ -12,6 +12,8 @@ Clone this repo:
 
 Configure nginx frontend:
 
+    client_max_body_size 100M;  # for uploading large attachments
+    
     server {
         listen 443 ssl http2;
         listen [::]:443 ssl http2;
