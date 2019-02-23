@@ -130,10 +130,16 @@ Create `signalserver/Signal-Server/config/Signal.yml` with following content:
       properties:
         charSet: UTF-8
     
-    # #apn: # Apple Push Notifications configuration
-    #   bundleId:
-    #   pushCertificate:
-    #   pushKey:
+    apn: # Apple Push Notifications configuration
+      bundleId: org.whispersystems.securesms
+      pushCertificate: |
+        -----BEGIN CERTIFICATE-----
+        ...
+        -----END CERTIFICATE-----
+      pushKey: |
+        -----BEGIN RSA PRIVATE KEY-----
+        ...
+        -----END RSA PRIVATE KEY-----
     
     gcm: # GCM Configuration
       senderId: 412918270132
