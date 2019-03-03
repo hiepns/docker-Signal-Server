@@ -6,7 +6,7 @@ Docker environment for running Signal-Server.
 
 Clone this repo:
 
-    git clone https://github.com/khaliullov/Signal-Server-docker.git
+    git clone https://github.com/khaliullov/docker-Signal-Server.git
 
 ## Configure Nginx frontend
 
