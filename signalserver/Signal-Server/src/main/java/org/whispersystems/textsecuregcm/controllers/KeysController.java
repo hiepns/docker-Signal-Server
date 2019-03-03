@@ -117,7 +117,6 @@ public class KeysController {
                                                 @QueryParam("relay")    Optional<String> relay)
       throws RateLimitExceededException
   {
-    System.out.println(" <<< Test 1 >>> ");
     try {
       if (relay.isPresent()) {
         return federatedClientManager.getClient(relay.get()).getKeysV2(number, deviceId);

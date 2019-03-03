@@ -43,15 +43,15 @@ public class SmsSender {
       throws IOException
   {
     // Fix up mexico numbers to 'mobile' format just for SMS delivery.
-    // if (destination.startsWith("+52") && !destination.startsWith("+521")) {
-    //   destination = "+521" + destination.substring(3);
-    // }
+    if (destination.startsWith("+52") && !destination.startsWith("+521")) {
+      destination = "+521" + destination.substring(3);
+    }
 
-    // try {
-    //   twilioSender.deliverSmsVerification(destination, clientType, verificationCode);
-    // } catch (TwilioRestException e) {
-    //   logger.info("Twilio SMS Failed: " + e.getErrorMessage());
-    // }
+    try {
+      twilioSender.deliverSmsVerification(destination, clientType, verificationCode);
+    } catch (TwilioRestException e) {
+      logger.info("Twilio SMS Failed: " + e.getErrorMessage());
+    }
   }
 
   public void deliverVoxVerification(String destination, String verificationCode)

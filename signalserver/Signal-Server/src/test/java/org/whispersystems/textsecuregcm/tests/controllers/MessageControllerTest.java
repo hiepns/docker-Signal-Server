@@ -18,6 +18,7 @@ import org.whispersystems.textsecuregcm.entities.StaleDevices;
 import org.whispersystems.textsecuregcm.federation.FederatedClientManager;
 import org.whispersystems.textsecuregcm.limits.RateLimiter;
 import org.whispersystems.textsecuregcm.limits.RateLimiters;
+import org.whispersystems.textsecuregcm.push.ApnFallbackManager;
 import org.whispersystems.textsecuregcm.push.PushSender;
 import org.whispersystems.textsecuregcm.push.ReceiptSender;
 import org.whispersystems.textsecuregcm.storage.Account;
@@ -58,6 +59,7 @@ public class MessageControllerTest {
   private  final MessagesManager        messagesManager        = mock(MessagesManager.class);
   private  final RateLimiters           rateLimiters           = mock(RateLimiters.class          );
   private  final RateLimiter            rateLimiter            = mock(RateLimiter.class           );
+  private  final ApnFallbackManager     apnFallbackManager     = mock(ApnFallbackManager.class);
 
   private  final ObjectMapper mapper = new ObjectMapper();
 
@@ -67,7 +69,7 @@ public class MessageControllerTest {
                                                             .addProvider(new AuthValueFactoryProvider.Binder())
                                                             .setTestContainerFactory(new GrizzlyWebTestContainerFactory())
                                                             .addResource(new MessageController(rateLimiters, pushSender, receiptSender, accountsManager,
-                                                                                               messagesManager, federatedClientManager))
+                                                                                               messagesManager, federatedClientManager, apnFallbackManager))
                                                             .build();
 
 
@@ -104,7 +106,7 @@ public class MessageControllerTest {
 
     assertThat("Good Response", response.getStatus(), is(equalTo(200)));
 
-    verify(pushSender, times(1)).sendMessage(any(Account.class), any(Device.class), any(Envelope.class), eq(false));
+    verify(pushSender, times(1)).sendMessage(any(Account.class), any(Device.class), any(Envelope.class));
   }
 
   @Test
@@ -157,7 +159,7 @@ public class MessageControllerTest {
 
     assertThat("Good Response Code", response.getStatus(), is(equalTo(200)));
 
-    verify(pushSender, times(2)).sendMessage(any(Account.class), any(Device.class), any(Envelope.class), eq(false));
+    verify(pushSender, times(2)).sendMessage(any(Account.class), any(Device.class), any(Envelope.class));
   }
 
   @Test
@@ -186,8 +188,8 @@ public class MessageControllerTest {
     final long timestampTwo = 313388;
 
     List<OutgoingMessageEntity> messages = new LinkedList<OutgoingMessageEntity>() {{
-      add(new OutgoingMessageEntity(1L, Envelope.Type.CIPHERTEXT_VALUE, null, timestampOne, "+14152222222", 2, "hi there".getBytes(), null));
-      add(new OutgoingMessageEntity(2L, Envelope.Type.RECEIPT_VALUE, null, timestampTwo, "+14152222222", 2, null, null));
+      add(new OutgoingMessageEntity(1L, false, Envelope.Type.CIPHERTEXT_VALUE, null, timestampOne, "+14152222222", 2, "hi there".getBytes(), null));
+      add(new OutgoingMessageEntity(2L, false, Envelope.Type.RECEIPT_VALUE, null, timestampTwo, "+14152222222", 2, null, null));
     }};
 
     OutgoingMessageEntityList messagesList = new OutgoingMessageEntityList(messages, false);
@@ -217,8 +219,8 @@ public class MessageControllerTest {
     final long timestampTwo = 313388;
 
     List<OutgoingMessageEntity> messages = new LinkedList<OutgoingMessageEntity>() {{
-      add(new OutgoingMessageEntity(1L, Envelope.Type.CIPHERTEXT_VALUE, null, timestampOne, "+14152222222", 2, "hi there".getBytes(), null));
-      add(new OutgoingMessageEntity(2L, Envelope.Type.RECEIPT_VALUE, null, timestampTwo, "+14152222222", 2, null, null));
+      add(new OutgoingMessageEntity(1L, false, Envelope.Type.CIPHERTEXT_VALUE, null, timestampOne, "+14152222222", 2, "hi there".getBytes(), null));
+      add(new OutgoingMessageEntity(2L, false, Envelope.Type.RECEIPT_VALUE, null, timestampTwo, "+14152222222", 2, null, null));
     }};
 
     OutgoingMessageEntityList messagesList = new OutgoingMessageEntityList(messages, false);
@@ -239,13 +241,13 @@ public class MessageControllerTest {
   public synchronized void testDeleteMessages() throws Exception {
     long timestamp = System.currentTimeMillis();
     when(messagesManager.delete(AuthHelper.VALID_NUMBER, 1, "+14152222222", 31337))
-        .thenReturn(Optional.of(new OutgoingMessageEntity(31337L,
+        .thenReturn(Optional.of(new OutgoingMessageEntity(31337L, true,
                                                           Envelope.Type.CIPHERTEXT_VALUE,
                                                           null, timestamp,
                                                           "+14152222222", 1, "hi".getBytes(), null)));
 
     when(messagesManager.delete(AuthHelper.VALID_NUMBER, 1, "+14152222222", 31338))
-        .thenReturn(Optional.of(new OutgoingMessageEntity(31337L,
+        .thenReturn(Optional.of(new OutgoingMessageEntity(31337L, true,
                                                           Envelope.Type.RECEIPT_VALUE,
                                                           null, System.currentTimeMillis(),
                                                           "+14152222222", 1, null, null)));

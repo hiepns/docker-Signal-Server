@@ -29,7 +29,6 @@ import org.whispersystems.textsecuregcm.limits.RateLimiters;
 import org.whispersystems.textsecuregcm.storage.Account;
 import org.whispersystems.textsecuregcm.util.Conversions;
 import org.whispersystems.textsecuregcm.s3.UrlSigner;
-//import org.whispersystems.textsecuregcm.minio.UrlSigner;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;

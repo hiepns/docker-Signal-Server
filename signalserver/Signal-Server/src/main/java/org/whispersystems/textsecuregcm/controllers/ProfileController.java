@@ -34,12 +34,6 @@ import java.security.SecureRandom;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 
-// new
-import com.amazonaws.ClientConfiguration;
-import com.amazonaws.services.s3.AmazonS3ClientBuilder;
-import com.amazonaws.client.builder.AwsClientBuilder;
-import com.amazonaws.regions.Regions;
-
 import io.dropwizard.auth.Auth;
 
 @Path("/v1/profile")
@@ -60,8 +54,6 @@ public class ProfileController {
   {
     AWSCredentials         credentials         = new BasicAWSCredentials(profilesConfiguration.getAccessKey(), profilesConfiguration.getAccessSecret());
     AWSCredentialsProvider credentialsProvider = new AWSStaticCredentialsProvider(credentials);
-    ClientConfiguration clientConfiguration = new ClientConfiguration();
-		clientConfiguration.setSignerOverride("AWSS3V4SignerType");
 
     this.rateLimiters       = rateLimiters;
     this.accountsManager    = accountsManager;
@@ -70,12 +62,6 @@ public class ProfileController {
                                             .withCredentials(credentialsProvider)
                                             .withRegion(profilesConfiguration.getRegion())
                                             .build();
-    // this.s3client           = AmazonS3ClientBuilder.standard()
-    //                                                .withEndpointConfiguration(new AwsClientBuilder.EndpointConfiguration("https://projectsignal.me:9000", Regions.US_EAST_1.name()))
-    //                                                .withPathStyleAccessEnabled(true)
-    //                                                .withClientConfiguration(clientConfiguration)
-    //                                                .withCredentials(new AWSStaticCredentialsProvider(credentials))
-    //                                                .build();
 
     this.policyGenerator  = new PostPolicyGenerator(profilesConfiguration.getRegion(),
                                                     profilesConfiguration.getBucket(),

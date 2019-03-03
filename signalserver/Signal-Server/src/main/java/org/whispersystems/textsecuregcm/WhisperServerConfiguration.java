@@ -21,6 +21,7 @@ import org.whispersystems.textsecuregcm.configuration.ApnConfiguration;
 import org.whispersystems.textsecuregcm.configuration.FederationConfiguration;
 import org.whispersystems.textsecuregcm.configuration.GcmConfiguration;
 import org.whispersystems.textsecuregcm.configuration.MaxDeviceConfiguration;
+import org.whispersystems.textsecuregcm.configuration.MessageCacheConfiguration;
 import org.whispersystems.textsecuregcm.configuration.ProfilesConfiguration;
 import org.whispersystems.textsecuregcm.configuration.PushConfiguration;
 import org.whispersystems.textsecuregcm.configuration.RateLimitsConfiguration;
@@ -75,6 +76,16 @@ public class WhisperServerConfiguration extends Configuration {
   @JsonProperty
   private RedisConfiguration directory;
 
+  @NotNull
+  @Valid
+  @JsonProperty
+  private RedisConfiguration pushScheduler;
+
+  @NotNull
+  @Valid
+  @JsonProperty
+  private MessageCacheConfiguration messageCache;
+
   @Valid
   @NotNull
   @JsonProperty
@@ -128,7 +139,7 @@ public class WhisperServerConfiguration extends Configuration {
   private GcmConfiguration gcm;
 
   @Valid
-  //@NotNull
+  @NotNull
   @JsonProperty
   private ApnConfiguration apn;
 
@@ -158,6 +169,14 @@ public class WhisperServerConfiguration extends Configuration {
 
   public RedisConfiguration getDirectoryConfiguration() {
     return directory;
+  }
+
+  public MessageCacheConfiguration getMessageCacheConfiguration() {
+    return messageCache;
+  }
+
+  public RedisConfiguration getPushScheduler() {
+    return pushScheduler;
   }
 
   public DataSourceFactory getMessageStoreConfiguration() {

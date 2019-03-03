@@ -70,53 +70,53 @@ public class TwilioSmsSender {
   public void deliverSmsVerification(String destination, Optional<String> clientType, String verificationCode)
       throws IOException, TwilioRestException
   {
-    // TwilioRestClient    client         = new TwilioRestClient(accountId, accountToken);
-    // MessageFactory      messageFactory = client.getAccount().getMessageFactory();
-    // List<NameValuePair> messageParams  = new LinkedList<>();
-    // messageParams.add(new BasicNameValuePair("To", destination));
+    TwilioRestClient    client         = new TwilioRestClient(accountId, accountToken);
+    MessageFactory      messageFactory = client.getAccount().getMessageFactory();
+    List<NameValuePair> messageParams  = new LinkedList<>();
+    messageParams.add(new BasicNameValuePair("To", destination));
 
-    // if (Util.isEmpty(messagingServicesId)) {
-    //   messageParams.add(new BasicNameValuePair("From", getRandom(random, numbers)));
-    // } else {
-    //   messageParams.add(new BasicNameValuePair("MessagingServiceSid", messagingServicesId));
-    // }
+    if (Util.isEmpty(messagingServicesId)) {
+      messageParams.add(new BasicNameValuePair("From", getRandom(random, numbers)));
+    } else {
+      messageParams.add(new BasicNameValuePair("MessagingServiceSid", messagingServicesId));
+    }
     
-    // if ("ios".equals(clientType.orNull())) {
-    //   messageParams.add(new BasicNameValuePair("Body", String.format(SmsSender.SMS_IOS_VERIFICATION_TEXT, verificationCode, verificationCode)));
-    // } else {
-    //   messageParams.add(new BasicNameValuePair("Body", String.format(SmsSender.SMS_VERIFICATION_TEXT, verificationCode)));
-    // }
+    if ("ios".equals(clientType.orNull())) {
+      messageParams.add(new BasicNameValuePair("Body", String.format(SmsSender.SMS_IOS_VERIFICATION_TEXT, verificationCode, verificationCode)));
+    } else {
+      messageParams.add(new BasicNameValuePair("Body", String.format(SmsSender.SMS_VERIFICATION_TEXT, verificationCode)));
+    }
 	
-    // try {
-    //   messageFactory.create(messageParams);
-    // } catch (RuntimeException damnYouTwilio) {
-    //   throw new IOException(damnYouTwilio);
-    // }
+    try {
+      messageFactory.create(messageParams);
+    } catch (RuntimeException damnYouTwilio) {
+      throw new IOException(damnYouTwilio);
+    }
 
-    // smsMeter.mark();
+    smsMeter.mark();
   }
 
   public void deliverVoxVerification(String destination, String verificationCode)
       throws IOException, TwilioRestException
   {
-    // TwilioRestClient    client      = new TwilioRestClient(accountId, accountToken);
-    // CallFactory         callFactory = client.getAccount().getCallFactory();
-    // Map<String, String> callParams  = new HashMap<>();
-    // callParams.put("To", destination);
-    // callParams.put("From", getRandom(random, numbers));
-    // callParams.put("Url", "https://" + localDomain + "/v1/accounts/voice/twiml/" + verificationCode);
+    TwilioRestClient    client      = new TwilioRestClient(accountId, accountToken);
+    CallFactory         callFactory = client.getAccount().getCallFactory();
+    Map<String, String> callParams  = new HashMap<>();
+    callParams.put("To", destination);
+    callParams.put("From", getRandom(random, numbers));
+    callParams.put("Url", "https://" + localDomain + "/v1/accounts/voice/twiml/" + verificationCode);
 
-    // try {
-    //   callFactory.create(callParams);
-    // } catch (RuntimeException damnYouTwilio) {
-    //   throw new IOException(damnYouTwilio);
-    // }
+    try {
+      callFactory.create(callParams);
+    } catch (RuntimeException damnYouTwilio) {
+      throw new IOException(damnYouTwilio);
+    }
 
-    // voxMeter.mark();
+    voxMeter.mark();
   }
 
   private String getRandom(Random random, ArrayList<String> elements) {
-    return elements.get(100000);
+    return elements.get(random.nextInt(elements.size()));
   }
 
 }
