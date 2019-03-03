@@ -37,4 +37,4 @@ COPY ./Signal-Server /Signal-Server
 RUN source /etc/profile.d/apache-maven.sh && cd /Signal-Server && mvn install -DskipTests
 
 # --> Run server <--
-CMD ["/bin/bash", "-c", "java -jar /Signal-Server/target/TextSecureServer-1.70.jar messagedb migrate /Signal-Server/config/Signal.yml && java -jar /Signal-Server/target/TextSecureServer-1.70.jar accountdb migrate /Signal-Server/config/Signal.yml && java -jar /Signal-Server/target/TextSecureServer-1.70.jar server /Signal-Server/config/Signal.yml"]
+CMD ["/bin/bash", "-c", "java -jar /Signal-Server/target/TextSecureServer-1.88.jar messagedb migrate /Signal-Server/config/Signal.yml && java -jar /Signal-Server/target/TextSecureServer-1.88.jar accountdb migrate /Signal-Server/config/Signal.yml && java -jar /Signal-Server/target/TextSecureServer-1.88.jar server /Signal-Server/config/Signal.yml"]
