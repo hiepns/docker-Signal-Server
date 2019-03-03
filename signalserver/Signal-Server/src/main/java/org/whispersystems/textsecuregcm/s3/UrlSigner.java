@@ -71,11 +71,11 @@ public class UrlSigner {
     request.setExpiration(new Date(System.currentTimeMillis() + DURATION));
     request.setContentType("application/octet-stream");
 
-    if (unaccelerated) {
+    /* if (unaccelerated) {
       client.setS3ClientOptions(S3ClientOptions.builder().setPathStyleAccess(true).build());
     } else {
       client.setS3ClientOptions(S3ClientOptions.builder().setAccelerateModeEnabled(true).build());
-    }
+    } */
 
     return client.generatePresignedUrl(request);
   }
