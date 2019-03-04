@@ -36,9 +36,10 @@ pushScheduler:
   url:
   replicaUrls:
 
-messageCache: # Redis server configuration for message store cache
-  url:
-  replicaUrls:
+messageCache: # Redis server configuration for message cache
+  redis:
+    url:
+    replicaUrls:
 
 messageStore: # Postgresql database configuration for message store
   driverClass: org.postgresql.Driver

@@ -100,9 +100,24 @@ Create `signalserver/Signal-Server/config/Signal.yml` with following content:
     
     cache: # Redis server configuration for cache cluster
       url: "redis://signal-redis:6379/1"
+      replicaUrls:
+        - "redis://signal-redis:6379/4"
     
     directory: # Redis server configuration for directory cluster
       url: "redis://signal-redis:6379/0"
+      replicaUrls:
+        - "redis://signal-redis:6379/5"
+    
+    pushScheduler:
+      url: "redis://signal-redis:6379/6"
+      replicaUrls:
+        - "redis://signal-redis:6379/7"
+    
+    messageCache: # Redis server configuration for message store cache
+      redis:
+        url: "redis://signal-redis:6379/2"
+        replicaUrls:
+          - "redis://signal-redis:6379/3"
     
     messageStore: # Postgresql database configuration for message store
       driverClass: org.postgresql.Driver
