@@ -4,6 +4,10 @@ import com.amazonaws.auth.AWSCredentials;
 import com.amazonaws.auth.AWSCredentialsProvider;
 import com.amazonaws.auth.AWSStaticCredentialsProvider;
 import com.amazonaws.auth.BasicAWSCredentials;
+import com.amazonaws.ClientConfiguration;
+import com.amazonaws.client.builder.AwsClientBuilder;
+import com.amazonaws.services.s3.AmazonS3ClientBuilder;
+import com.amazonaws.regions.Regions;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3Client;
 import com.codahale.metrics.annotation.Timed;
@@ -58,10 +62,18 @@ public class ProfileController {
     this.rateLimiters       = rateLimiters;
     this.accountsManager    = accountsManager;
     this.bucket             = profilesConfiguration.getBucket();
-    this.s3client           = AmazonS3Client.builder()
-                                            .withCredentials(credentialsProvider)
-                                            .withRegion(profilesConfiguration.getRegion())
-                                            .build();
+    //this.s3client           = AmazonS3Client.builder()
+    //                                        .withCredentials(credentialsProvider)
+    //                                        .withRegion(profilesConfiguration.getRegion())
+    //                                        .build();
+    ClientConfiguration clientConfiguration = new ClientConfiguration();
+    clientConfiguration.setSignerOverride("AWSS3V4SignerType");
+    this.s3client           = AmazonS3ClientBuilder.standard()
+                                                   .withEndpointConfiguration(new AwsClientBuilder.EndpointConfiguration(profilesConfiguration.getEndpoint(), Regions.DEFAULT_REGION.getName()))
+                                                   .withPathStyleAccessEnabled(true)
+                                                   .withClientConfiguration(clientConfiguration)
+                                                   .withCredentials(new AWSStaticCredentialsProvider(credentials))
+                                                   .build();
 
     this.policyGenerator  = new PostPolicyGenerator(profilesConfiguration.getRegion(),
                                                     profilesConfiguration.getBucket(),

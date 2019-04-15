@@ -14,7 +14,7 @@ Configure nginx frontend:
 
     client_max_body_size 100M;  # for uploading large attachments
     
-    server {
+    server {  # for attachments
         listen 443 ssl http2;
         listen [::]:443 ssl http2;
 
@@ -28,6 +28,26 @@ Configure nginx frontend:
             proxy_set_header Host s3-signal.domain.ru;
         }
     }
+
+    server {  # profiles
+        listen 443 ssl http2;
+        listen [::]:443 ssl http2;
+
+        ssl_certificate /etc/letsencrypt/live/domain.ru/fullchain.pem;
+        ssl_certificate_key /etc/letsencrypt/live/domain.ru/privkey.pem;
+
+        server_name cdn.domain.ru;
+
+	    location /profiles {
+            proxy_pass http://127.0.0.1:9000/signal-profiles-buu/profiles;
+            proxy_set_header Host cdn.domain.ru;
+        }
+
+        location / {
+            proxy_pass http://127.0.0.1:9000/signal-profiles-buu;
+            proxy_set_header Host cdn.domain.ru;
+        }
+    }    
 
     server {
         listen 443 ssl http2;
@@ -136,6 +156,7 @@ Create `signalserver/Signal-Server/config/Signal.yml` with following content:
       accessSecret: u8cQx07PvHJS8/zvr7q3IFY+w2toIYIJQ7vm1ETH
       bucket: signal-profiles-buu
       region: us-east-1
+      endpoint: https://cdn.domain.ru
     
     database: # Postgresql database configuration
       driverClass: org.postgresql.Driver
