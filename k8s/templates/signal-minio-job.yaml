@@ -1,0 +1,26 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  annotations:
+    kompose.cmd: kompose convert
+    kompose.version: 1.21.0 ()
+    # This is what defines this resource as a hook. Without this line, the
+    # job is considered part of the release.
+    "helm.sh/hook": post-install
+    "helm.sh/hook-weight": "-5"
+    "helm.sh/hook-delete-policy": hook-succeeded
+  creationTimestamp: null
+  labels:
+    io.kompose.service: signal-minio-job
+  name: signal-minio-job
+spec:
+  template:
+    metadata:
+      name: signal-minio-job
+    spec:
+      restartPolicy: Never
+      containers:
+        - name: signal-post-install-job
+          image: minio/mc
+          command: ["/bin/sh"]
+          args: ["-c", "/usr/bin/mc config host add myminio http://signal-minio:{{ .Values.minio.port }} {{ .Values.minio.accessKey }} {{ .Values.minio.secretKey }} && /usr/bin/mc mb myminio/{{ .Values.minio.bucketAttachments }} && /usr/bin/mc mb myminio/{{ .Values.minio.bucketProfiles }} && /usr/bin/mc policy set public myminio/{{ .Values.minio.bucketAttachments }} && /usr/bin/mc policy set public myminio/{{ .Values.minio.bucketProfiles }}"]

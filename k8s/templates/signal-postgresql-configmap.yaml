@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  creationTimestamp: null
+  labels:
+    io.kompose.service: signal-postgresql-configmap
+  name: signal-postgresql-configmap
+data:
+  010-create_databases.sh: |
+{{ .Files.Get "010-create_databases.sh" | printf "%s" | indent 4 }}

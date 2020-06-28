@@ -1,0 +1,40 @@
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    kompose.cmd: kompose convert
+    kompose.version: 1.21.0 ()
+  creationTimestamp: null
+  labels:
+    io.kompose.service: signal-turn
+  name: signal-turn
+spec:
+  ports:
+    {{- range untilStep (int .Values.turn.lowPort) (int (add1 .Values.turn.highPort)) 1 }}
+    - name: "signal-turn-{{ toYaml . | trim }}-udp"
+      protocol: UDP
+      port: {{ toYaml . | trim }}
+      targetPort: {{ toYaml . | trim }}
+    {{- end }}
+    - name: "signal-turn-3478-udp"
+      targetPort: 3478
+      port: 3478
+      protocol: UDP
+    - name: "signal-turn-3478-tcp"
+      targetPort: 3478
+      port: 3478
+      protocol: TCP
+    - name: "signal-turn-3479-udp"
+      targetPort: 3479
+      port: 3479
+      protocol: UDP
+    - name: "signal-turn-3479-tcp"
+      targetPort: 3479
+      port: 3479
+      protocol: TCP
+  externalIPs:
+  - {{ .Values.externalIp }}
+  selector:
+    io.kompose.service: signal-turn
+status:
+  loadBalancer: {}

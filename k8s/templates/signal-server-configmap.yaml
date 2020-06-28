@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  creationTimestamp: null
+  labels:
+    io.kompose.service: signal-server-configmap
+  name: signal-server-configmap
+data:
+  Signal.yml: |
+{{ .Files.Get "Signal.yml" | printf "%s" | indent 4 }}

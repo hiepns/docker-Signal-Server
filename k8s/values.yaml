@@ -1,0 +1,48 @@
+# Default values for signal.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+imagePullSecrets: "regcred"
+externalIp: 0.0.0.0
+registry: ""
+acmeChallengeType: "http0"
+
+# signal server
+signal:
+  domain: textsecure-service.domain.ru
+
+# turn
+turn:
+  secret: yoursecret
+  realm: turn
+  lowPort: 49152
+  highPort: 49252
+
+# nosql config
+redis:
+  image: redis
+  tag: 3.2.8
+
+# db config
+postgres:
+  image: postgres
+  tag: 9.3.20
+  dbName: postgres
+  dbPassword: password
+  dbUser: signal
+  pvcSize: 1000Mi
+
+# s3 storage config
+minio:
+  accessKey: ACCESS_KEY
+  secretKey: SECRET_KEY
+  bucketProfiles: signal-profiles
+  bucketAttachments: signal-attachments
+  endpointProfiles: cdn.domain.ru
+  endpointAttachments: s3.domain.ru
+  image: minio/minio
+  tag: latest
+  host: 0.0.0.0
+  port: 9000
+  pvcDataSize: 1000Mi
+  pvcConfigSize: 100Mi

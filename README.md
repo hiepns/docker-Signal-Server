@@ -1,6 +1,6 @@
-# Signal-Server docker
+# Signal-Server Docker Compose and Kubernetes
 
-Docker environment for running Signal-Server.
+Docker compose or Kubernetes environment for running Signal-Server.
 
 ## Clone repo
 
@@ -21,7 +21,7 @@ Configure nginx frontend:
         ssl_certificate /etc/nginx/certs/domain.ru/fullchain.pem;
         ssl_certificate_key /etc/nginx/certs/domain.ru/privkey.pem;
 
-        server_name s3-signal.domain.ru;
+        server_name s3.domain.ru;
 
         location / {
             proxy_pass http://127.0.0.1:9000;
@@ -84,6 +84,8 @@ Create `.env` file according to example `.env.dist`:
     TURN_SECRET=test  # turn secret key
     TURN_LOW=49152  # turn minimum UDP port
     TURN_HIGH=49252  # turn maximun UDP port
+    REGISTRY=registry.domain.ru/namespace/  # registry for storing Docker images for k8s
+    IMAGE_PULL_SECRETS=regcred  # password for accessing registry
 
 ## Configure Signal server
 
@@ -149,14 +151,14 @@ Create `signalserver/Signal-Server/config/Signal.yml` with following content:
       accessKey: AKIAIG4ILCORMAJCS37A
       accessSecret: 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
       bucket: signal-attachments-buu
-      endpoint: https://s3-signal.domain.ru
+      endpoint: https://s3.domain.ru
     
     profiles: # MINIO configuration
       accessKey: AKIAIG4ILCORMAJCS37A
       accessSecret: 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
       bucket: signal-profiles-buu
       region: us-east-1
-      endpoint: https://cdn.domain.ru
+      endpoint: https://s3.domain.ru
     
     database: # Postgresql database configuration
       driverClass: org.postgresql.Driver
@@ -201,3 +203,46 @@ Start docker-compose:
 In order to proper work it is required to create S3 buckets:
 
     make provision
+
+## Deploy to Kubernetes via Helm
+
+To deploy via Helm you ought to build and publish `signal-server` and
+`signal-turn` images to the Kubernetes Docker registry.
+
+After that you may deploy:
+
+    make helm
+
+all values for Helm templates will be used from `.env` file.
+
+## Configuring Ingress
+
+It is required to manually configure Ingress to make everything work.
+Sample Ingress configuration:
+
+    apiVersion: extensions/v1beta1
+    kind: Ingress
+    metadata:
+      name: main-ingress
+      annotations:
+        kubernetes.io/ingress.class: nginx
+        nginx.ingress.kubernetes.io/worker-shutdown-timeout: "60"
+        nginx.ingress.kubernetes.io/proxy-body-size: "0"
+        certmanager.k8s.io/acme-challenge-type: http0
+        certmanager.k8s.io/cluster-issuer: letsencrypt-production
+        nginx.org/mergeable-ingress-type: master
+    spec:
+      tls:
+      - hosts:
+        - s3.domain.ru
+        - cdn.domain.ru
+        - textsecure-service.domain.ru
+        secretName: certificates-secret
+      rules:
+      - host: s3.domain.ru
+      - host: cdn.domain.ru
+      - host: textsecure-service.domain.ru
+
+And apply them:
+
+    kubectl apply -f ingress.yaml

@@ -1,1 +1,6 @@
 .env
+.idea
+k8s/Signal.yml
+k8s/010-create_databases.sh
+signalserver/Signal-Server/target
+signalserver/Signal-Server/.idea

@@ -1,0 +1,17 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: signal-server
+  annotations:
+    kubernetes.io/ingress.class: nginx
+    nginx.ingress.kubernetes.io/worker-shutdown-timeout: "60"
+    nginx.ingress.kubernetes.io/proxy-body-size: "0"
+    nginx.org/mergeable-ingress-type: minion
+spec:
+  rules:
+    - host: {{ .Values.signal.domain }}
+      http:
+        paths:
+          - backend:
+              serviceName: signal-server
+              servicePort: 8080
